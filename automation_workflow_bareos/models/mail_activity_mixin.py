@@ -40,6 +40,7 @@ class MailActivityMixin(models.AbstractModel):
                     ("res_id", "=", record.id),
                     ("activity_type_id", "=", activity_type.id),
                     ("summary", "=", summary),
+                    ("automated", "=", True),
                 ],
                 limit=1,
             )

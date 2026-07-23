@@ -129,6 +129,30 @@ class TestIncomingActivity(TransactionCase):
         )
         self.assertEqual(len(activities), 1)
 
+    def test_manual_activity_not_overwritten(self):
+        manual_activity = self.env["mail.activity"].create(
+            {
+                "res_model": "crm.lead",
+                "res_id": self.lead.id,
+                "activity_type_id": self.activity_todo.id,
+                "summary": "react to message",
+                "user_id": self.user1.id,
+                "automated": False,
+            }
+        )
+        manual_activity.write({"note": "<p>manual note</p>"})
+        self.lead._schedule_incoming_message_activity()
+        domain = [
+            ("res_model", "=", "crm.lead"),
+            ("res_id", "=", self.lead.id),
+            ("activity_type_id", "=", self.activity_todo.id),
+            ("summary", "=", "react to message"),
+        ]
+        activities = self.env["mail.activity"].search(domain)
+        self.assertEqual(len(activities), 1)
+        self.assertEqual(activities.id, manual_activity.id)
+        self.assertIn("manual note", activities.note)
+
     def test_unknown_user_field(self):
         self.lead._schedule_incoming_message_activity(user_field="nonexistent_field")
         self._assert_no_activity(self.lead)
