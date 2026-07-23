@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================ -->
+        <!-- CRM Lead                                                     -->
+        <!-- ============================================================ -->
+        <record id="automation_incoming_activity_crm_lead" model="base.automation">
+            <field name="name">Incoming Message Activity (CRM Lead)</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="trigger">on_message_received</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="action_incoming_activity_crm_lead" model="ir.actions.server">
+            <field name="name">Create Activity on Incoming Message (CRM Lead)</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="state">code</field>
+            <field name="code">record._schedule_incoming_message_activity(user_field="user_id")</field>
+            <field name="base_automation_id" ref="automation_incoming_activity_crm_lead"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Sale Order                                                   -->
+        <!-- ============================================================ -->
+        <record id="automation_incoming_activity_sale_order" model="base.automation">
+            <field name="name">Incoming Message Activity (Sale Order)</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="trigger">on_message_received</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="action_incoming_activity_sale_order" model="ir.actions.server">
+            <field name="name">Create Activity on Incoming Message (Sale Order)</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">record._schedule_incoming_message_activity(user_field="user_id")</field>
+            <field name="base_automation_id" ref="automation_incoming_activity_sale_order"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Purchase Order                                              -->
+        <!-- ============================================================ -->
+        <record id="automation_incoming_activity_purchase_order" model="base.automation">
+            <field name="name">Incoming Message Activity (Purchase Order)</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="trigger">on_message_received</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="action_incoming_activity_purchase_order" model="ir.actions.server">
+            <field name="name">Create Activity on Incoming Message (Purchase Order)</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="state">code</field>
+            <field name="code">record._schedule_incoming_message_activity(user_field="user_id")</field>
+            <field name="base_automation_id" ref="automation_incoming_activity_purchase_order"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Account Move (Invoice)                                      -->
+        <!-- ============================================================ -->
+        <record id="automation_incoming_activity_account_move" model="base.automation">
+            <field name="name">Incoming Message Activity (Account Move)</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="trigger">on_message_received</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="action_incoming_activity_account_move" model="ir.actions.server">
+            <field name="name">Create Activity on Incoming Message (Account Move)</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">record._schedule_incoming_message_activity(user_field="invoice_user_id")</field>
+            <field name="base_automation_id" ref="automation_incoming_activity_account_move"/>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Project Task                                                -->
+        <!-- ============================================================ -->
+        <record id="automation_incoming_activity_project_task" model="base.automation">
+            <field name="name">Incoming Message Activity (Project Task)</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="trigger">on_message_received</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="action_incoming_activity_project_task" model="ir.actions.server">
+            <field name="name">Create Activity on Incoming Message (Project Task)</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="state">code</field>
+            <field name="code">record._schedule_incoming_message_activity(user_field="user_ids")</field>
+            <field name="base_automation_id" ref="automation_incoming_activity_project_task"/>
+        </record>
+
+    </data>
+</odoo>
