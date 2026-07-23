@@ -132,7 +132,7 @@ class TestIncomingActivity(TransactionCase):
     def test_manual_activity_not_overwritten(self):
         manual_activity = self.env["mail.activity"].create(
             {
-                "res_model": "crm.lead",
+                "res_model_id": self.env["ir.model"]._get("crm.lead").id,
                 "res_id": self.lead.id,
                 "activity_type_id": self.activity_todo.id,
                 "summary": "react to message",
