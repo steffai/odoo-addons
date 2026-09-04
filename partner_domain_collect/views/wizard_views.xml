@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="partner_domain_collect_wizard_form" model="ir.ui.view">
+        <field name="name">partner.domain.collect.wizard.form</field>
+        <field name="model">partner.domain.collect.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign contacts to company">
+                <field name="available_contact_ids" invisible="1"/>
+                <group>
+                    <field name="company_id"/>
+                </group>
+                <group string="Contacts">
+                    <field name="contact_ids">
+                        <list>
+                            <field name="display_name"/>
+                            <field name="email"/>
+                        </list>
+                    </field>
+                </group>
+                <footer>
+                    <button name="action_assign" type="object" string="Assign"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
