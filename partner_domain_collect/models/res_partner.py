@@ -191,7 +191,7 @@ class ResPartner(models.Model):
                 continue
             email_domain = email_domain_extract(partner.email) or ""
             for domain in company._get_domain_candidates():
-                if email_domain == domain or email_domain.endswith("." + domain):
+                if self._email_domain_matches_domain(email_domain, domain):
                     partner.suggested_company_match_domain_bareos = domain
                     break
 
