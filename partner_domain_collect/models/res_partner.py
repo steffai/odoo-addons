@@ -223,9 +223,9 @@ class ResPartner(models.Model):
     def _compute_suggested_company_id_bareos(self):
         """Preselect the first suggested company (alphabetical order)."""
         for partner in self:
-            partner.suggested_company_id_bareos = partner.suggested_company_ids_bareos[
-                :1
-            ]
+            partner.suggested_company_id_bareos = (
+                partner.suggested_company_ids_bareos.sorted("name")[:1]
+            )
 
     def _inverse_suggested_company_id_bareos(self):
         """The selection is a form-session helper; nothing to persist."""
