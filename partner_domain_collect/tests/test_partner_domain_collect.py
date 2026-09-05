@@ -158,9 +158,9 @@ class TestPartnerDomainCollect(TransactionCase):
         contact = self.partner_model.create(
             {"name": "Jane", "email": "jane@sub.bareos.com"}
         )
-        # best match is the exact subdomain company
-        self.assertEqual(contact.suggested_company_id_bareos, exact)
-        # but the user selects the other suggested company
+        self.assertIn(exact, contact.suggested_company_ids_bareos)
+        self.assertIn(self.company, contact.suggested_company_ids_bareos)
+        # the user selects the other suggested company
         contact.with_context(
             suggested_company_id_selected_bareos=self.company.id
         ).action_assign_suggested_company()
@@ -231,7 +231,7 @@ class TestPartnerDomainCollect(TransactionCase):
         )
         self.assertEqual(contact.suggested_company_id_bareos, self.company)
 
-    def test_best_suggested_company_exact_over_subdomain(self):
+    def test_suggested_company_sorted_alphabetically(self):
         exact = self.partner_model.create({"name": "Bareos Sub", "is_company": True})
         self.env["res.partner.domain.collect"].create(
             {"name": "sub.bareos.com", "partner_id": exact.id}
@@ -240,7 +240,8 @@ class TestPartnerDomainCollect(TransactionCase):
             {"name": "Jane", "email": "jane@sub.bareos.com"}
         )
         self.assertIn(exact, contact.suggested_company_ids_bareos)
-        self.assertEqual(contact.suggested_company_id_bareos, exact)
+        # alphabetical order: "Bareos GmbH" < "Bareos Sub"
+        self.assertEqual(contact.suggested_company_id_bareos, self.company)
 
     def test_no_preselection_without_suggestion(self):
         contact = self.partner_model.create({"name": "Max", "email": "max@other.com"})

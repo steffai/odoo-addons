@@ -28,11 +28,11 @@ class ResPartner(models.Model):
 
     suggested_company_id_bareos = fields.Many2one(
         "res.partner",
-        string="Suggested company (best)",
+        string="Suggested company",
         compute="_compute_suggested_company_id_bareos",
         inverse="_inverse_suggested_company_id_bareos",
         search="_search_suggested_company_id_bareos",
-        help="Best matching company whose domain matches "
+        help="First suggested company whose domain matches "
         "this contact's email address.",
     )
 
@@ -173,7 +173,7 @@ class ResPartner(models.Model):
                 if self._email_domain_matches_domain(email_domain, domain):
                     company_ids |= ids
             partner.suggested_company_ids_bareos = (
-                self.env["res.partner"].browse(sorted(company_ids))
+                self.env["res.partner"].browse(company_ids).sorted("name")
                 if company_ids
                 else False
             )
@@ -233,11 +233,13 @@ class ResPartner(models.Model):
             domain = (domain or []) + [("id", "in", list(ids or []))]
         return super().name_search(name, domain, operator, limit)
 
-    @api.depends("suggested_company_ids_bareos", "email")
+    @api.depends("suggested_company_ids_bareos")
     def _compute_suggested_company_id_bareos(self):
-        """Preselect the best matching suggested company."""
+        """Preselect the first suggested company (alphabetical order)."""
         for partner in self:
-            partner.suggested_company_id_bareos = partner._best_suggested_company()
+            partner.suggested_company_id_bareos = partner.suggested_company_ids_bareos[
+                :1
+            ]
 
     def _inverse_suggested_company_id_bareos(self):
         """The selection is a form-session helper; nothing to persist."""
@@ -285,36 +287,6 @@ class ResPartner(models.Model):
             self.filtered("is_company")._recompute_suggestions()
         return res
 
-    def _best_suggested_company(self):
-        """Return the best matching suggested company, or an empty recordset.
-
-        Prefers an exact domain match over a subdomain match, and companies
-        with collected domains over website-derived ones.
-        """
-        self.ensure_one()
-        suggestions = self.suggested_company_ids_bareos
-        if not suggestions:
-            return self.env["res.partner"]
-        if not self.email:
-            return suggestions[0]
-        email_domain = email_domain_extract(self.email) or ""
-        best = suggestions[0]
-        best_score = -1
-        for company in suggestions:
-            score = 0
-            for domain in company._get_domain_candidates():
-                if email_domain == domain:
-                    score = 4
-                    break
-                if email_domain.endswith("." + domain):
-                    score = max(score, 2)
-            if company.domain_collect_ids_bareos:
-                score += 1
-            if score > best_score:
-                best = company
-                best_score = score
-        return best
-
     ### ACTIONS
 
     def action_view_potential_contacts(self):
@@ -334,8 +306,8 @@ class ResPartner(models.Model):
 
         The button passes the currently selected company through the context,
         because the field itself is computed (with a no-op inverse) and would
-        otherwise fall back to the best match. Only a company that is actually
-        suggested for this contact is assigned.
+        otherwise fall back to the first suggestion. Only a company that is
+        actually suggested for this contact is assigned.
         """
         self.ensure_one()
         selected = self.env.context.get("suggested_company_id_selected_bareos")
