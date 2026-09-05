@@ -229,7 +229,7 @@ class ResPartner(models.Model):
 
     def _inverse_suggested_company_id_bareos(self):
         """The selection is a form-session helper; nothing to persist."""
-        return True
+        return
 
     def _search_suggested_company_id_bareos(self, operator, value):
         """Forward searches on the computed field to the stored M2M field."""
