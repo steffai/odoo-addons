@@ -43,12 +43,6 @@ class ResPartner(models.Model):
         "contact's email address.",
     )
 
-    suggested_company_count_bareos = fields.Integer(
-        string="Options",
-        compute="_compute_suggested_company_count_bareos",
-        help="Number of companies suggested for this contact.",
-    )
-
     suggested_company_info_bareos = fields.Char(
         string="Suggested companies info",
         compute="_compute_suggested_company_info_bareos",
@@ -201,27 +195,19 @@ class ResPartner(models.Model):
                     partner.suggested_company_match_domain_bareos = domain
                     break
 
-    @api.depends("suggested_company_ids_bareos")
-    def _compute_suggested_company_count_bareos(self):
-        """Number of companies suggested for this contact."""
-        for partner in self:
-            partner.suggested_company_count_bareos = len(
-                partner.suggested_company_ids_bareos
-            )
-
     @api.depends(
-        "suggested_company_count_bareos", "suggested_company_match_domain_bareos"
+        "suggested_company_ids_bareos", "suggested_company_match_domain_bareos"
     )
     def _compute_suggested_company_info_bareos(self):
         """Human-readable summary of the suggestions and the matching domain."""
         for partner in self:
+            count = len(partner.suggested_company_ids_bareos)
+            domain = partner.suggested_company_match_domain_bareos
             parts = []
-            if partner.suggested_company_count_bareos:
-                parts.append(f"{partner.suggested_company_count_bareos} option(s)")
-            if partner.suggested_company_match_domain_bareos:
-                parts.append(
-                    f"matching domain: {partner.suggested_company_match_domain_bareos}"
-                )
+            if count:
+                parts.append(f"{count} option(s)")
+            if domain:
+                parts.append(f"matching domain: {domain}")
             partner.suggested_company_info_bareos = " \u00b7 ".join(parts)
 
     @api.model

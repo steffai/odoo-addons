@@ -299,9 +299,9 @@ class TestPartnerDomainCollect(TransactionCase):
         contact = self.partner_model.create(
             {"name": "John", "email": "john@bareos.com"}
         )
-        self.assertEqual(contact.suggested_company_count_bareos, 1)
+        self.assertEqual(len(contact.suggested_company_ids_bareos), 1)
         other = self.partner_model.create({"name": "Max", "email": "max@other.com"})
-        self.assertEqual(other.suggested_company_count_bareos, 0)
+        self.assertEqual(len(other.suggested_company_ids_bareos), 0)
 
     def test_suggested_company_info(self):
         contact = self.partner_model.create(
